@@ -1,6 +1,7 @@
 'use strict'
 
 const request = require('request')
+const DownloadTrendRequest = require('./DownloadTrendRequest')
 
 class ExploreTrendRequest {
 
@@ -10,8 +11,9 @@ class ExploreTrendRequest {
             category: 0,
             property: ''
         }
-
+        
         this.time = null
+        this.normalization_function = raw => raw
 
         this.request = {
             url: 'https://trends.google.com/trends/api/explore',
@@ -36,7 +38,20 @@ class ExploreTrendRequest {
         }
     }
 
-    setEngine(engine){
+    normalize(fn){
+        this.normalization_function = fn
+
+        return this
+    }
+
+   /**
+    * Choose a search provider.
+    * 
+    * @param {string} engine
+    *
+    * @return {ExploreTrendRequest}
+    */
+    searchProvider(engine){
         let engines = {
             web: '',
             news: 'news',
@@ -54,7 +69,11 @@ class ExploreTrendRequest {
         return this
     }
 
-    setTimePeriod(start_date,end_date){
+    /* * * * * * * * *
+    *  Time Filters  *
+    * * * * * * * * */
+
+    between(start_date,end_date){
         this.time = `${start_date} ${end_date}`
 
         return this
@@ -114,6 +133,14 @@ class ExploreTrendRequest {
         return this
     }
 
+   /**
+    * Add a new keyword for comparison.
+    *
+    * @param {string} keyword
+    * @param {string} geo
+    *
+    * @return {ExploreTrendRequest}
+    */
     addKeyword(keyword,geo = ''){
         this.filters.comparisonItem.push({
             keyword,
@@ -124,15 +151,56 @@ class ExploreTrendRequest {
         return this
     }
 
+   /**
+    * An alias method for the `addKeyword`
+    * 
+    * @param {string} keyword
+    * @param {string} geo
+    *
+    * @return {ExploreTrendRequest}
+    */
     compare(keyword,geo = ''){
         return this.addKeyword(keyword,geo)
     }
 
-    fetch(){
+   /**
+    * Download the CSV output for the current trend query.
+    * 
+    * @return {Promise}
+    */
+    download(){
+        return new Promise( (resolve,reject) => {
+            this.resolveDownloadRequestDetails().then( details => {
+                let download_request = new DownloadTrendRequest(details)
+                download_request.fetch().then( result => {
+                    resolve(this.normalization_function(result))
+                }).catch(reject)
+            }).catch(reject)
+        })
+    }
+
+    /**
+     * A valid explore request need to have the same time property on each comparison keyword.
+     * 
+     * @return {ExploreTrendRequest}
+     */
+    normalizeRequestTimeFormat(){
         this.filters.comparisonItem = this.filters.comparisonItem.map( item => {
             item.time = this.time
             return item
         })
+
+        return this
+    }
+
+    /**
+     * Resolve the download request details in a JSON form.
+     * 
+     * @return {Promise}
+     */
+    resolveDownloadRequestDetails(){
+
+        this.normalizeRequestTimeFormat()
 
         this.request.qs.req = JSON.stringify(this.filters)
 
