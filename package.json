@@ -1,0 +1,14 @@
+{
+  "name": "g-trends",
+  "version": "0.0.3",
+  "description": "A simple API client for Google Trends.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "author": "Ron Masas",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.83.0"
+  }
+}
