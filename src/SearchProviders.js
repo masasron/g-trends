@@ -3,7 +3,7 @@
 module.exports = {
     Web: 'web',
     News: 'news',
-    Images: 'images',
+    GoogleImages: 'images',
     YouTube: 'youtube',
     GoogleShopping: 'google_shopping'
 }
