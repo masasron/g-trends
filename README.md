@@ -1,12 +1,12 @@
 # G Trends
 A simple API client for Google Trends.
 
-# Quick Start
+## Quick Start
 ```sh
 npm install g-trends
 ```
 
-# Super simple to use
+## Super simple to use
 G Trends client is designed to be the simplest way for developers to access Google Trends data.
 
 ```js
@@ -41,7 +41,7 @@ explorer.addKeyword('Dream about snakes')
   ...
 ```
 
-# ExploreTrendRequest
+## ExploreTrendRequest
 
 ### Method Listing
 
