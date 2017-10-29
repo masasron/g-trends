@@ -1,6 +1,7 @@
 'use strict'
 
 const request = require('request')
+const Normalize = require('./Normalize')
 const DownloadTrendRequest = require('./DownloadTrendRequest')
 
 class ExploreTrendRequest {
@@ -12,8 +13,8 @@ class ExploreTrendRequest {
             property: ''
         }
         
-        this.time = null
-        this.normalization_function = raw => raw
+        this.past90Days()
+        this.normalization_function = Normalize.GoogleTrendsCSV
 
         this.request = {
             url: 'https://trends.google.com/trends/api/explore',
