@@ -6,13 +6,13 @@ const DownloadTrendRequest = require('./DownloadTrendRequest')
 
 class ExploreTrendRequest {
 
-    constructor(){
+    constructor() {
         this.filters = {
-            comparisonItem:[],
+            comparisonItem: [],
             category: 0,
             property: ''
         }
-        
+
         this.past90Days()
         this.normalization_function = Normalize.GoogleTrendsCSV
 
@@ -21,38 +21,38 @@ class ExploreTrendRequest {
             method: 'GET',
             gzip: true,
             headers: {
-                'accept':'application/json, text/plain, */*',
+                'accept': 'application/json, text/plain, */*',
                 'accept-encoding': 'gzip, deflate, br',
                 'accept-language': 'en-US,en;q=0.8,he;q=0.6,ru;q=0.4,es;q=0.2,de;q=0.2,la;q=0.2',
-                'cache-control':'no-cache',
-                'cookie':'',
-                'pragma':'no-cache',
-                'referer':'https://trends.google.com/trends/explore',
-                'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
+                'cache-control': 'no-cache',
+                'cookie': '',
+                'pragma': 'no-cache',
+                'referer': 'https://trends.google.com/trends/explore',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
             },
             qs: {
-                hl:'en-US',
-                tz:'-180',
+                hl: 'en-US',
+                tz: '-180',
                 req: null,
-                tz:'-180'
+                tz: '-180'
             }
         }
     }
 
-    normalize(fn){
+    normalize(fn) {
         this.normalization_function = fn
 
         return this
     }
 
-   /**
-    * Choose a search provider.
-    * 
-    * @param {string} engine
-    *
-    * @return {ExploreTrendRequest}
-    */
-    searchProvider(engine){
+    /**
+     * Choose a search provider.
+     * 
+     * @param {string} engine
+     *
+     * @return {ExploreTrendRequest}
+     */
+    searchProvider(engine) {
         let engines = {
             web: '',
             news: 'news',
@@ -61,7 +61,7 @@ class ExploreTrendRequest {
             google_shopping: 'froogle'
         }
 
-        if (typeof engines[engine] === 'undefined'){
+        if (typeof engines[engine] === 'undefined') {
             throw `Invalid engine please choose one of the following ${Object.keys(engines).join(',')}`
         }
 
@@ -74,75 +74,75 @@ class ExploreTrendRequest {
     *  Time Filters  *
     * * * * * * * * */
 
-    between(start_date,end_date){
+    between(start_date, end_date) {
         this.time = `${start_date} ${end_date}`
 
         return this
     }
 
-    pastHour(){
+    pastHour() {
         this.time = 'now 1-H'
 
         return this
     }
 
-    pastFourHours(){
+    pastFourHours() {
         this.time = 'now 4-H'
 
         return this
     }
 
-    pastDay(){
+    pastDay() {
         this.time = 'now 1-d'
-        
+
         return this
     }
 
-    past7Days(){
+    past7Days() {
         this.time = 'today 7-d'
-        
+
         return this
     }
 
-    past30Days(){
+    past30Days() {
         this.time = 'today 1-m'
-        
+
         return this
     }
 
-    past90Days(){
+    past90Days() {
         this.time = 'today 3-m'
-        
+
         return this
     }
 
-    past12Months(){
+    past12Months() {
         this.time = 'today 12-m'
-        
+
         return this
     }
 
-    past5Years(){
+    past5Years() {
         this.time = 'today 5-y'
-        
+
         return this
     }
 
-    from2004ToPresent(){
+    from2004ToPresent() {
         this.time = 'all'
 
         return this
     }
 
-   /**
-    * Add a new keyword for comparison.
-    *
-    * @param {string} keyword
-    * @param {string} geo
-    *
-    * @return {ExploreTrendRequest}
-    */
-    addKeyword(keyword,geo = ''){
+    /**
+     * Add a new keyword for comparison.
+     *
+     * @param {string} keyword
+     * @param {string} geo
+     *
+     * @return {ExploreTrendRequest}
+     */
+    addKeyword(keyword, geo = '') {
         this.filters.comparisonItem.push({
             keyword,
             geo,
@@ -152,28 +152,28 @@ class ExploreTrendRequest {
         return this
     }
 
-   /**
-    * An alias method for the `addKeyword`
-    * 
-    * @param {string} keyword
-    * @param {string} geo
-    *
-    * @return {ExploreTrendRequest}
-    */
-    compare(keyword,geo = ''){
-        return this.addKeyword(keyword,geo)
+    /**
+     * An alias method for the `addKeyword`
+     * 
+     * @param {string} keyword
+     * @param {string} geo
+     *
+     * @return {ExploreTrendRequest}
+     */
+    compare(keyword, geo = '') {
+        return this.addKeyword(keyword, geo)
     }
 
-   /**
-    * Download the CSV output for the current trend query.
-    * 
-    * @return {Promise}
-    */
-    download(){
-        return new Promise( (resolve,reject) => {
-            this.resolveDownloadRequestDetails().then( details => {
+    /**
+     * Download the CSV output for the current trend query.
+     * 
+     * @return {Promise}
+     */
+    download() {
+        return new Promise((resolve, reject) => {
+            this.resolveDownloadRequestDetails().then(details => {
                 let download_request = new DownloadTrendRequest(details)
-                download_request.fetch().then( result => {
+                download_request.fetch().then(result => {
                     resolve(this.normalization_function(result))
                 }).catch(reject)
             }).catch(reject)
@@ -185,8 +185,8 @@ class ExploreTrendRequest {
      * 
      * @return {ExploreTrendRequest}
      */
-    normalizeRequestTimeFormat(){
-        this.filters.comparisonItem = this.filters.comparisonItem.map( item => {
+    normalizeRequestTimeFormat() {
+        this.filters.comparisonItem = this.filters.comparisonItem.map(item => {
             item.time = this.time
             return item
         })
@@ -195,32 +195,59 @@ class ExploreTrendRequest {
     }
 
     /**
+     * Google blocks requests with invalid cookies
+     * This method makes a request in order to get a valid cookie.
+     * 
+     * @returns {Promise}
+     */
+    resolveGoogleGuestCookie() {
+        return new Promise((resolve, reject) => {
+            if (this.guest_cookie) {
+                return resolve(this.guest_cookie)
+            }
+
+            request('https://trends.google.com/trends/explore', (error, response, body) => {
+                if (error) {
+                    return reject(error)
+                }
+
+                this.guest_cookie = response.headers['set-cookie'].join(';')
+                resolve(this.guest_cookie)
+            })
+        })
+    }
+
+    /**
      * Resolve the download request details in a JSON form.
      * 
      * @return {Promise}
      */
-    resolveDownloadRequestDetails(){
+    resolveDownloadRequestDetails() {
 
         this.normalizeRequestTimeFormat()
 
         this.request.qs.req = JSON.stringify(this.filters)
 
-        return new Promise( (resolve,reject) => {
-            request(this.request,(error,response,body) => {
-                if (error){
-                    return reject(error)
-                }
+        return new Promise((resolve, reject) => {
+            this.resolveGoogleGuestCookie().then(cookie => {
+                this.request.headers.cookie = cookie
 
-                try{
-                    resolve(JSON.parse(body.split("\n")[1]).widgets[0])
-                }catch(ex){
-                    reject({
-                        ex:ex,
-                        body: body,
-                        qs: this.request.qs
-                    })
-                }
-            })
+                request(this.request, (error, response, body) => {
+                    if (error) {
+                        return reject(error)
+                    }
+
+                    try {
+                        resolve(JSON.parse(body.split("\n")[1]).widgets[0])
+                    } catch (ex) {
+                        reject({
+                            ex: ex,
+                            body: body,
+                            qs: this.request.qs
+                        })
+                    }
+                })
+            }).catch(reject)
         })
     }
 
