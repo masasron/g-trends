@@ -1,6 +1,6 @@
 {
   "name": "g-trends",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple API client for Google Trends.",
   "main": "index.js",
   "scripts": {
