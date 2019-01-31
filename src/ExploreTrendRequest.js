@@ -1,8 +1,9 @@
 'use strict'
 
-const request = require('request')
-const Normalize = require('./Normalize')
-const DownloadTrendRequest = require('./DownloadTrendRequest')
+const fetch = require('node-fetch');
+const Normalize = require('./Normalize');
+const querystring = require('querystring');
+const DownloadTrendRequest = require('./DownloadTrendRequest');
 
 class ExploreTrendRequest {
 
@@ -203,18 +204,13 @@ class ExploreTrendRequest {
     resolveGoogleGuestCookie() {
         return new Promise((resolve, reject) => {
             if (this.guest_cookie) {
-                return resolve(this.guest_cookie)
+                return resolve(this.guest_cookie);
             }
-
-            request('https://trends.google.com/trends/explore', (error, response, body) => {
-                if (error) {
-                    return reject(error)
-                }
-
-                this.guest_cookie = response.headers['set-cookie'].join(';')
-                resolve(this.guest_cookie)
-            })
-        })
+            fetch('https://trends.google.com/trends/explore').then(response => {
+                this.guest_cookie = response.headers.get('set-cookie');
+                resolve(this.guest_cookie);
+            }).catch(reject);
+        });
     }
 
     /**
@@ -230,23 +226,19 @@ class ExploreTrendRequest {
 
         return new Promise((resolve, reject) => {
             this.resolveGoogleGuestCookie().then(cookie => {
-                this.request.headers.cookie = cookie
-
-                request(this.request, (error, response, body) => {
-                    if (error) {
-                        return reject(error)
-                    }
-
+                this.request.headers.cookie = cookie;
+                fetch(`${this.request.url}?${querystring.stringify(this.request.qs)}`, {
+                    compress: true,
+                    method: this.request.method,
+                    headers: this.request.headers
+                }).then(async response => {
                     try {
-                        resolve(JSON.parse(body.split("\n")[1]).widgets[0])
-                    } catch (ex) {
-                        reject({
-                            ex: ex,
-                            body: body,
-                            qs: this.request.qs
-                        })
+                        let text = await response.text();
+                        resolve(JSON.parse(text.split("\n")[1]).widgets[0]);
+                    } catch (error) {
+                        reject(error);
                     }
-                })
+                }).catch(reject);
             }).catch(reject)
         })
     }
