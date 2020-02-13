@@ -29,7 +29,7 @@ class ExploreTrendRequest {
                 'cookie': '',
                 'pragma': 'no-cache',
                 'referer': 'https://trends.google.com/trends/explore',
-                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36'
             },
             qs: {
                 hl: 'en-US',
@@ -100,7 +100,7 @@ class ExploreTrendRequest {
     }
 
     past7Days() {
-        this.time = 'today 7-d'
+        this.time = 'now 7-d'
 
         return this
     }
